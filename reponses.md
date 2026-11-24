@@ -1,14 +1,12 @@
-# TP1 SOAP et WSDL - Réponses
+ TP1 SOAP et WSDL - Réponses
 
-Binôme : 24110 et 23001
 
-Environnement : JDK 17, Maven 3.9, jaxws-rt 4.0.2, SoapUI, curl (Git Bash).
 
 ---
 
-## Partie A : Code-first
+ Partie A : Code-first
 
-### Étape 1 : Créer et lancer le service
+ Étape 1 : Créer et lancer le service
 
 Après `mvn compile exec:java`, la console affiche `WSDL : http://localhost:8080/bib/EmpruntService?wsdl` et le WSDL s'ouvre bien dans le navigateur.
 
@@ -17,7 +15,7 @@ Pour l'exception, c'est `@WebFault(name = "LivreIndisponible", targetNamespace =
 
 **Q2.** JAXB doit recréer les objets Java à partir du XML reçu (et l'inverse pour la réponse). Il crée l'objet vide par réflexion, puis remplit les champs un par un en lisant les balises. Il ne peut pas deviner quel constructeur avec paramètres appeler ni dans quel ordre passer les valeurs. Sans constructeur vide, JAXB refuse la classe (erreur du type "does not have a no-arg default constructor") et le service ne démarre pas.
 
-### Étape 2 : Lire le WSDL généré
+ Étape 2 : Lire le WSDL généré
 
 **Q1.** L'URL du service est dans `<service>/<port>/<soap:address>` : `http://localhost:8080/bib/EmpruntService`.
 
@@ -46,7 +44,7 @@ Seul le wrapper `emprunterLivre` a le préfixe. Le schéma généré n'a pas `el
 - SOAP : les balises `Envelope`, `Header`, `Body` dans l'espace de noms `http://schemas.xmlsoap.org/soap/envelope/`. C'est le protocole de messagerie : il définit l'enveloppe, les en-têtes optionnels et le format des erreurs (Fault).
 - Le WSDL n'apparaît pas dans le message. C'est le contrat qui décrit le service : les opérations et les données (portType, types), la façon d'emballer les messages (binding) et l'adresse (service). SoapUI l'a utilisé pour générer la requête.
 
-### Étape 3 : Envoyer des messages SOAP
+ Étape 3 : Envoyer des messages SOAP
 
 `xml/01-emprunter.xml` envoyé avec curl :
 ```
@@ -81,7 +79,7 @@ Les erreurs 4 et 5 ne déclenchent aucune erreur côté serveur :
 
 Ces deux erreurs sont les plus dangereuses parce qu'elles passent sans qu'on s'en rende compte.
 
-### Étape 4 : Provoquer et construire des Faults
+ Étape 4 : Provoquer et construire des Faults
 
 **Q1.**
 - Cas 1 (ISBN `978-2-10`) : `faultcode = S:Client`, `faultstring = ISBN mal formé : 978-2-10`, HTTP 500.
@@ -122,10 +120,9 @@ Pour la question 4 de l'étape (rendreLivre), après le redémarrage, un numéro
 - en SOAP 1.2 sur HTTP, une Fault `Sender` est renvoyée avec le code 400 (et non 500 comme en 1.1), et le Content-Type est `application/soap+xml`.
 
 ---
+ Partie B : Contract-first
 
-## Partie B : Contract-first
-
-### Étape 5 : Générer le code depuis le WSDL
+ Étape 5 : Générer le code depuis le WSDL
 
 Après `mvn generate-sources`, on trouve dans `target/generated-sources/wsimport/mr/supnum/bib/contrat/` : `EmpruntPortType`, `EmpruntService`, `EmpruntType`, `EmprunterLivre`, `EmprunterLivreResponse`, `LivreIndisponible`, `LivreIndisponibleFault`, `ObjectFactory` et `package-info`.
 
